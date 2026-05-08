@@ -1,4 +1,3 @@
-// Importando o cérebro da pasta de serviços
 import { consultarInteligencia } from '../services/agente.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -57,16 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
         userInput.placeholder = micBtn.classList.contains('gravando') ? "A escutar..." : "Explore a sabedoria...";
     });
 
-    // Evento atualizado para conectar com o agente.js com segurança
     sendBtn.addEventListener('click', async () => {
         const texto = userInput.value.trim();
         if (texto) {
-            // Imprime a pergunta do usuário na tela
             outputArea.innerHTML += `<div class="mensagem-sistema"><p style="color: var(--google-blue); font-weight: 600;">Você: ${texto}</p></div>`;
             userInput.value = ''; 
             rolarChat();
 
-            // Adiciona status de reflexão
             const statusDiv = document.createElement('div');
             statusDiv.className = 'mensagem-sistema';
             statusDiv.innerHTML = '<p>Refletindo...</p>';
@@ -74,21 +70,19 @@ document.addEventListener('DOMContentLoaded', () => {
             rolarChat();
 
             try {
-                // Chama a inteligência do agente.js
                 const resposta = await consultarInteligencia(texto);
                 
-                // Remove o aviso de "Refletindo..." e coloca a resposta real
                 outputArea.removeChild(statusDiv);
                 outputArea.innerHTML += `<div class="mensagem-sistema"><p style="color: var(--text-primary); text-align: left;">${resposta.replace(/\n/g, '<br>')}</p></div>`;
             } catch (erro) {
                 outputArea.removeChild(statusDiv);
-                outputArea.innerHTML += `<div class="mensagem-sistema"><p style="color: #e53e3e;">Atenção: Configure a chave do motor na engrenagem superior antes de prosseguir.</p></div>`;
+                // O sistema agora revelará a raiz do obstáculo de forma transparente
+                outputArea.innerHTML += `<div class="mensagem-sistema"><p style="color: #e53e3e;">Erro do Sistema: ${erro.message}</p></div>`;
             }
             rolarChat();
         }
     });
 
-    // Permite enviar apertando a tecla Enter
     userInput.addEventListener("keypress", function(event) {
         if (event.key === "Enter") {
             sendBtn.click();

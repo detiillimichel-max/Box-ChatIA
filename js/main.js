@@ -1,3 +1,6 @@
+// Importando o cérebro da pasta de serviços
+import { consultarInteligencia } from '../services/agente.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const btnConfig = document.getElementById('btn-config');
     const configModal = document.getElementById('config-modal');
@@ -34,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elevenLabsKeyInput.value = '';
         
         if(inputGemini || inputEleven) {
-            outputArea.innerHTML += `<div class="mensagem-sistema"><p>Identidade azul confirmada. Chaves salvas.</p></div>`;
+            outputArea.innerHTML += `<div class="mensagem-sistema"><p>Identidade azul confirmada. Chaves salvas no cofre.</p></div>`;
             setTimeout(() => configModal.classList.add('hidden'), 1500);
         }
     });
@@ -54,12 +57,41 @@ document.addEventListener('DOMContentLoaded', () => {
         userInput.placeholder = micBtn.classList.contains('gravando') ? "A escutar..." : "Explore a sabedoria...";
     });
 
-    sendBtn.addEventListener('click', () => {
+    // Evento atualizado para conectar com o agente.js com segurança
+    sendBtn.addEventListener('click', async () => {
         const texto = userInput.value.trim();
         if (texto) {
-            outputArea.innerHTML += `<div class="mensagem-sistema"><p>Processando: "${texto}"</p></div>`;
+            // Imprime a pergunta do usuário na tela
+            outputArea.innerHTML += `<div class="mensagem-sistema"><p style="color: var(--google-blue); font-weight: 600;">Você: ${texto}</p></div>`;
             userInput.value = ''; 
             rolarChat();
+
+            // Adiciona status de reflexão
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'mensagem-sistema';
+            statusDiv.innerHTML = '<p>Refletindo...</p>';
+            outputArea.appendChild(statusDiv);
+            rolarChat();
+
+            try {
+                // Chama a inteligência do agente.js
+                const resposta = await consultarInteligencia(texto);
+                
+                // Remove o aviso de "Refletindo..." e coloca a resposta real
+                outputArea.removeChild(statusDiv);
+                outputArea.innerHTML += `<div class="mensagem-sistema"><p style="color: var(--text-primary); text-align: left;">${resposta.replace(/\n/g, '<br>')}</p></div>`;
+            } catch (erro) {
+                outputArea.removeChild(statusDiv);
+                outputArea.innerHTML += `<div class="mensagem-sistema"><p style="color: #e53e3e;">Atenção: Configure a chave do motor na engrenagem superior antes de prosseguir.</p></div>`;
+            }
+            rolarChat();
+        }
+    });
+
+    // Permite enviar apertando a tecla Enter
+    userInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            sendBtn.click();
         }
     });
 
@@ -68,4 +100,3 @@ document.addEventListener('DOMContentLoaded', () => {
         chat.scrollTop = chat.scrollHeight;
     }
 });
-

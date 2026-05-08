@@ -1,62 +1,71 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Mapeamento dos elementos da Arquitetura Orbital
     const btnConfig = document.getElementById('btn-config');
     const configModal = document.getElementById('config-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
     const saveKeyBtn = document.getElementById('save-key-btn');
     const apiKeyInput = document.getElementById('api-key-input');
+    const elevenLabsKeyInput = document.getElementById('elevenlabs-key-input');
+    
+    const addBtn = document.getElementById('add-btn');
+    const tuneBtn = document.getElementById('tune-btn');
+    const micBtn = document.getElementById('mic-btn');
     const sendBtn = document.getElementById('send-btn');
+    
     const userInput = document.getElementById('user-input');
     const outputArea = document.getElementById('output-area');
 
-    // 2. Inicialização Segura: Verifica a memória do telemóvel
-    const chaveGuardada = localStorage.getItem('gemini_api_key');
-    if (chaveGuardada) {
-        // Se a chave já existe no cofre local, não precisamos exibi-la por segurança, 
-        // mas sabemos que o motor está pronto para operar.
-        apiKeyInput.placeholder = "Chave já configurada com segurança.";
-    }
+    const geminiKey = localStorage.getItem('gemini_api_key');
+    const elevenKey = localStorage.getItem('elevenlabs_api_key');
+    
+    if (geminiKey) apiKeyInput.placeholder = "Chave do Cérebro (Gemini) OK.";
+    if (elevenKey) elevenLabsKeyInput.placeholder = "Chave da Voz (ElevenLabs) OK.";
 
-    // 3. Controle do Cofre (Abrir e Fechar)
-    btnConfig.addEventListener('click', () => {
-        configModal.classList.remove('hidden');
-    });
+    btnConfig.addEventListener('click', () => configModal.classList.remove('hidden'));
+    closeModalBtn.addEventListener('click', () => configModal.classList.add('hidden'));
 
-    closeModalBtn.addEventListener('click', () => {
-        configModal.classList.add('hidden');
-    });
-
-    // 4. Mecanismo de Salvamento Local (Isolado do GitHub)
     saveKeyBtn.addEventListener('click', () => {
-        const chave = apiKeyInput.value.trim();
+        const inputGemini = apiKeyInput.value.trim();
+        const inputEleven = elevenLabsKeyInput.value.trim();
         
-        if (chave) {
-            localStorage.setItem('gemini_api_key', chave);
-            apiKeyInput.value = ''; // Limpa o campo visualmente
-            apiKeyInput.placeholder = "Chave guardada com sucesso.";
-            
-            // Feedback reflexivo no painel principal
-            outputArea.innerHTML = `
-                <div class="mensagem-sistema">
-                    <p>A sabedoria foi ativada. O motor de inteligência está agora conectado de forma segura ao seu dispositivo.</p>
-                </div>
-            `;
-            
-            setTimeout(() => {
-                configModal.classList.add('hidden');
-            }, 1500);
-            
-        } else {
-            apiKeyInput.placeholder = "Atenção: A chave não pode estar vazia.";
+        if (inputGemini) localStorage.setItem('gemini_api_key', inputGemini);
+        if (inputEleven) localStorage.setItem('elevenlabs_api_key', inputEleven);
+        
+        apiKeyInput.value = '';
+        elevenLabsKeyInput.value = '';
+        
+        if(inputGemini || inputEleven) {
+            outputArea.innerHTML += `<div class="mensagem-sistema"><p>Identidade azul confirmada. Chaves salvas.</p></div>`;
+            setTimeout(() => configModal.classList.add('hidden'), 1500);
         }
     });
 
-    // 5. Preparação da Navegação Orbital (Botão Azul do Google)
+    addBtn.addEventListener('click', () => {
+        outputArea.innerHTML += `<div class="mensagem-sistema"><p>Módulo de ferramentas (+) ativado.</p></div>`;
+        rolarChat();
+    });
+
+    tuneBtn.addEventListener('click', () => {
+        outputArea.innerHTML += `<div class="mensagem-sistema"><p>Ajustes de sabedoria ativados.</p></div>`;
+        rolarChat();
+    });
+
+    micBtn.addEventListener('click', () => {
+        micBtn.classList.toggle('gravando');
+        userInput.placeholder = micBtn.classList.contains('gravando') ? "A escutar..." : "Explore a sabedoria...";
+    });
+
     sendBtn.addEventListener('click', () => {
-        const textoUsuario = userInput.value.trim();
-        if (textoUsuario) {
-            // Em breve, esta função chamará o serviço da IA
+        const texto = userInput.value.trim();
+        if (texto) {
+            outputArea.innerHTML += `<div class="mensagem-sistema"><p>Processando: "${texto}"</p></div>`;
             userInput.value = ''; 
+            rolarChat();
         }
     });
+
+    function rolarChat() {
+        const chat = document.getElementById('chat-display');
+        chat.scrollTop = chat.scrollHeight;
+    }
 });
+

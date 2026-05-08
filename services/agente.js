@@ -27,17 +27,14 @@ export async function consultarInteligencia(textoUsuario, historico = []) {
         throw new Error("Chave do Cérebro ausente. Configure na engrenagem.");
     }
 
-    // Modelo atualizado para gemini-2.0-flash
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${chaveGemini.trim()}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${chaveGemini.trim()}`;
 
-    // Monta o histórico no formato correto da API
     const contents = [
         ...historico,
         { role: "user", parts: [{ text: textoUsuario }] }
     ];
 
     const corpoRequisicao = {
-        // systemInstruction é o campo correto da API Gemini
         systemInstruction: {
             parts: [{ text: instrucaoSistema }]
         },

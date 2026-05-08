@@ -7,7 +7,6 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    
     <link rel="stylesheet" href="CSS/style.css">
 </head>
 <body>
@@ -22,15 +21,28 @@
         <main id="chat-display" class="glass-panel">
             <div id="output-area">
                 <div class="mensagem-sistema">
-                    <p>Bem-vindo ao Box-ChatIA. Sistema modular inicializado. Aguardando comandos...</p>
+                    <p>Interface Box-ChatIA personalizada. Identidade visual azul ativada. Aguardando comandos...</p>
                 </div>
             </div>
         </main>
 
         <nav id="orbital-menu" class="glass-nav">
             <div class="orbital-center">
-                <input type="text" id="user-input" placeholder="Explore os nichos de sabedoria...">
-                <button id="send-btn" class="send-btn">
+                <button id="add-btn" class="icon-btn action-btn" title="Anexos e Ferramentas">
+                    <span class="material-symbols-outlined">add</span>
+                </button>
+                
+                <button id="tune-btn" class="icon-btn action-btn" title="Ajustes de IA">
+                    <span class="material-symbols-outlined">tune</span>
+                </button>
+
+                <input type="text" id="user-input" placeholder="Explore a sabedoria...">
+                
+                <button id="mic-btn" class="icon-btn mic-btn" title="Modo Conversa">
+                    <span class="material-symbols-outlined">mic</span>
+                </button>
+
+                <button id="send-btn" class="send-btn" title="Enviar">
                     <span class="material-symbols-outlined">send</span>
                 </button>
             </div>
@@ -39,11 +51,12 @@
 
     <div id="config-modal" class="modal hidden">
         <div class="modal-content glass-panel">
-            <h2>Motor de Sabedoria</h2>
-            <p>Insira sua chave de acesso. Ela ficará guardada apenas na memória do seu dispositivo, garantindo segurança total.</p>
-            <input type="password" id="api-key-input" placeholder="Cole sua chave aqui...">
+            <h2>Motores de Sabedoria e Voz</h2>
+            <p>Insira suas chaves de acesso. Elas ficarão guardadas apenas na memória do seu dispositivo.</p>
+            <input type="password" id="api-key-input" placeholder="Chave do Cérebro (Gemini)...">
+            <input type="password" id="elevenlabs-key-input" placeholder="Chave da Voz (ElevenLabs)...">
             <div class="modal-actions">
-                <button id="save-key-btn" class="primary-btn">Salvar Chave</button>
+                <button id="save-key-btn" class="primary-btn">Salvar Chaves</button>
                 <button id="close-modal-btn" class="secondary-btn">Fechar</button>
             </div>
         </div>

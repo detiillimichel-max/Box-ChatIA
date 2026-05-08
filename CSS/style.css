@@ -1,8 +1,5 @@
-/* ==========================================================================
-   Variáveis Globais - Paleta Clara e Desaturada (Sem Modo Escuro)
-   ========================================================================== */
 :root {
-    --bg-color: #f0f4f8; /* Fundo claro e desaturado */
+    --bg-color: #f0f4f8; 
     --text-primary: #2d3748;
     --text-secondary: #4a5568;
     --google-blue: #1a73e8;
@@ -12,49 +9,40 @@
     --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
 }
 
-/* ==========================================================================
-   Reset e Configurações Base
-   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Inter', sans-serif;
-    -webkit-tap-highlight-color: transparent; /* Remove o piscar azul ao tocar no telemóvel */
+    -webkit-tap-highlight-color: transparent; 
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
     height: 100vh;
-    overflow: hidden; /* Impede a tela de rolar inteira, apenas o chat rola */
+    overflow: hidden; 
     display: flex;
     justify-content: center;
 }
 
 #app-container {
     width: 100%;
-    max-width: 600px; /* Mantém proporção perfeita no mobile e não estica no PC */
+    max-width: 600px; 
     height: 100%;
     display: flex;
     flex-direction: column;
     position: relative;
 }
 
-/* ==========================================================================
-   Utilitários Glassmorphism
-   ========================================================================== */
 .glass-panel {
     background: var(--glass-bg);
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px); /* Suporte para iOS */
+    -webkit-backdrop-filter: blur(12px); 
     border: 1px solid var(--glass-border);
     box-shadow: var(--glass-shadow);
 }
 
-/* ==========================================================================
-   Cabeçalho
-   ========================================================================== */
 .glass-header {
     display: flex;
     justify-content: space-between;
@@ -72,26 +60,24 @@ body {
     color: var(--google-blue);
 }
 
+/* Ícones agora são azuis por padrão para distinguir do Gemini */
 .icon-btn {
     background: transparent;
     border: none;
-    color: var(--text-secondary);
+    color: var(--google-blue);
     cursor: pointer;
-    padding: 8px;
+    padding: 6px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .icon-btn:hover {
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(26, 115, 232, 0.08);
 }
 
-/* ==========================================================================
-   Área Principal do Chat
-   ========================================================================== */
 #chat-display {
     flex: 1;
     overflow-y: auto;
@@ -112,11 +98,8 @@ body {
     border-radius: 8px;
 }
 
-/* ==========================================================================
-   Navegação Orbital (Entrada de Dados Centralizada)
-   ========================================================================== */
 #orbital-menu {
-    padding: 10px 20px 20px 20px;
+    padding: 10px 15px 20px 15px;
     background: linear-gradient(to top, var(--bg-color) 70%, transparent);
     z-index: 10;
 }
@@ -126,19 +109,32 @@ body {
     align-items: center;
     background: #ffffff;
     border-radius: 30px;
-    padding: 8px 12px;
+    padding: 6px 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(26, 115, 232, 0.2); /* Borda levemente azulada */
+    gap: 4px;
+}
+
+.mic-btn.gravando {
+    color: #e53e3e;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
 #user-input {
     flex: 1;
     border: none;
     background: transparent;
-    padding: 10px 15px;
-    font-size: 1rem;
+    padding: 8px 5px;
+    font-size: 0.95rem;
     color: var(--text-primary);
     outline: none;
+    min-width: 50px;
 }
 
 #user-input::placeholder {
@@ -150,14 +146,16 @@ body {
     color: white;
     border: none;
     border-radius: 50%;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
     transition: transform 0.2s ease, background-color 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 4px;
 }
 
 .send-btn:active {
@@ -165,9 +163,6 @@ body {
     background-color: var(--google-blue-hover);
 }
 
-/* ==========================================================================
-   Cofre de Segurança (Modal da Chave API)
-   ========================================================================== */
 .modal {
     position: absolute;
     top: 0;
@@ -180,13 +175,10 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 100;
-    opacity: 1;
-    transition: opacity 0.3s ease;
 }
 
 .modal.hidden {
-    opacity: 0;
-    pointer-events: none;
+    display: none;
 }
 
 .modal-content {
@@ -209,24 +201,14 @@ body {
     margin-bottom: 20px;
 }
 
-#api-key-input {
+#api-key-input, #elevenlabs-key-input {
     width: 100%;
     padding: 12px;
     border: 1px solid #cbd5e0;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     font-size: 0.9rem;
     outline: none;
-}
-
-#api-key-input:focus {
-    border-color: var(--google-blue);
-}
-
-.modal-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
 }
 
 .primary-btn {

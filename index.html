@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Box-ChatIA</title>
+    <meta name="gemini-api-version" content="v1">
+    <meta name="gemini-model" content="gemini-1.5-flash">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
@@ -21,7 +23,7 @@
         <main id="chat-display" class="glass-panel">
             <div id="output-area">
                 <div class="mensagem-sistema">
-                    <p>Interface Box-ChatIA personalizada. Identidade visual azul ativada. Aguardando comandos...</p>
+                    <p>Interface Box-ChatIA personalizada. Gemini API v1 com modelo gemini-1.5-flash ativado. Aguardando comandos...</p>
                 </div>
             </div>
         </main>
@@ -62,6 +64,6 @@
         </div>
     </div>
 
-    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/main.js?v=gemini-v1-flash"></script>
 </body>
 </html>

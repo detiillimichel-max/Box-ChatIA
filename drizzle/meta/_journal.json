@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1778515511092,
+      "tag": "0000_smart_omega_sentinel",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1778515709984,
+      "tag": "0001_gorgeous_vector",
+      "breakpoints": true
+    }
+  ]
+}

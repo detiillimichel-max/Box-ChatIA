@@ -38,10 +38,11 @@ export async function consultarInteligencia(textoUsuario, historico = []) {
     ];
 
     const corpoRequisicao = {
-        systemInstruction: {
-            parts: [{ text: instrucaoSistema }]
-        },
-        contents: contents,
+        contents: [
+            { role: "user", parts: [{ text: instrucaoSistema }] },
+            { role: "model", parts: [{ text: "Entendido. Sou o Box-ChatIA e seguirei suas diretrizes." }] },
+            ...contents
+        ],
         generationConfig: {
             temperature: 0.7,
             maxOutputTokens: 1024

@@ -20,7 +20,7 @@ Sua expertise absoluta está nestes 15 nichos:
 
 Regra de Ouro: Se o usuário perguntar sobre estes 15 nichos, entregue uma resposta profunda e estruturada. Se a pergunta fugir completamente dos nichos, decline com elegância. Responda sempre em parágrafos curtos e claros.`;
 
-const GEMINI_API_VERSION = 'v1';
+const GEMINI_API_VERSION = 'v1beta';
 const GEMINI_MODEL = 'gemini-1.5-flash';
 
 export async function consultarInteligencia(textoUsuario, historico = []) {

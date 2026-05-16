@@ -27,7 +27,6 @@ export default function ChatPage() {
     useSpeechRecognition({
       language: "pt-BR",
       onTranscript: (text) => {
-        // Auto-send transcribed text
         if (text.trim()) {
           handleSendMessage(text);
           resetTranscript();
@@ -38,21 +37,19 @@ export default function ChatPage() {
       },
     });
 
-  const sendMessageMutation = trpc.chat.sendMessage.useMutation();
+  // Mantemos as queries antigas apenas para não quebrar a estrutura do React
   const getHistoryQuery = trpc.chat.getHistory.useQuery(
     { limit: 50 },
     { enabled: isAuthenticated }
   );
   const synthesizeAudioMutation = trpc.chat.synthesizeAudio.useMutation();
 
-  // Load chat history on mount
   useEffect(() => {
     if (getHistoryQuery.data) {
       setMessages(getHistoryQuery.data);
     }
   }, [getHistoryQuery.data]);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -60,47 +57,80 @@ export default function ChatPage() {
   const handleSendMessage = async (message: string) => {
     if (!message.trim() || !user) return;
 
-    // Add user message to UI
+    // Adiciona a mensagem do usuário na tela
     const userMessage: Message = { role: "user", content: message };
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
     try {
-      const response = await sendMessageMutation.mutateAsync({
-        message,
-        conversationHistory: messages,
+      // --- INÍCIO DO BYPASS (CONEXÃO DIRETA E SEGURA COM O GEMINI) ---
+      
+      // 1. Pega a chave da API salva no navegador (Verifique se o nome no seu modal é esse mesmo)
+      const geminiKey = localStorage.getItem("gemini_api_key"); 
+      
+      if (!geminiKey) {
+        toast.error("Chave da API do Gemini não configurada. Clique na engrenagem.");
+        setIsLoading(false);
+        return;
+      }
+
+      // 2. Formata o histórico exatamente no padrão exigido pelo Google Gemini
+      const formattedHistory = messages.map(msg => ({
+        role: msg.role === "assistant" ? "model" : "user",
+        parts: [{ text: msg.content }]
+      }));
+      
+      formattedHistory.push({
+        role: "user",
+        parts: [{ text: message }]
       });
 
-      if (response.success) {
-        // Try to synthesize speech for the response
-        let audioUrl: string | undefined;
-        const elevenLabsKey = localStorage.getItem("elevenlabs_api_key");
-        if (elevenLabsKey) {
-          try {
-            const audioResponse = await synthesizeAudioMutation.mutateAsync({
-              text: response.response,
-              apiKey: elevenLabsKey,
-            });
+      // 3. Faz o disparo direto para a API do Google (bypassando o servidor do Manus)
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: formattedHistory })
+      });
 
-            if (audioResponse.success) {
-              audioUrl = audioResponse.audioUrl;
-            }
-          } catch (error) {
-            console.error("Error synthesizing audio:", error);
-          }
-        }
-
-        // Add AI response to UI
-        const aiMessage: Message = {
-          role: "assistant",
-          content: response.response,
-          audioUrl,
-        };
-        setMessages((prev) => [...prev, aiMessage]);
+      if (!response.ok) {
+        throw new Error("Falha na comunicação direta com a API do Gemini.");
       }
+
+      const data = await response.json();
+      const aiTextResponse = data.candidates[0].content.parts[0].text;
+      
+      // --- FIM DO BYPASS ---
+
+      let audioUrl: string | undefined;
+      const elevenLabsKey = localStorage.getItem("elevenlabs_api_key");
+      
+      // Mantivemos a tentativa do áudio isolada para não quebrar o chat caso o trpc falhe aqui também
+      if (elevenLabsKey) {
+        try {
+          const audioResponse = await synthesizeAudioMutation.mutateAsync({
+            text: aiTextResponse,
+            apiKey: elevenLabsKey,
+          });
+
+          if (audioResponse.success) {
+            audioUrl = audioResponse.audioUrl;
+          }
+        } catch (error) {
+          console.error("Erro no ElevenLabs (servidor local ausente):", error);
+        }
+      }
+
+      // Adiciona a resposta da IA na tela
+      const aiMessage: Message = {
+        role: "assistant",
+        content: aiTextResponse,
+        audioUrl,
+      };
+      setMessages((prev) => [...prev, aiMessage]);
+
     } catch (error) {
-      console.error("Error sending message:", error);
-      toast.error("Erro ao enviar mensagem. Verifique suas chaves de API.");
+      console.error("Erro ao enviar mensagem:", error);
+      toast.error("Erro ao conectar com a IA. Verifique sua chave da API.");
     } finally {
       setIsLoading(false);
     }

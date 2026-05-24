@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
-import { sendToGemini } from "../gemini";
+import { sendToGroq } from "../groq";
 import { saveChatMessage, getChatHistory } from "../db";
 import { synthesizeSpeech } from "../elevenlabs";
 
 export const chatRouter = router({
   /**
-   * Send a message and get a response from Gemini.
+   * Send a message and get a response from Groq/Llama.
    * Saves both user message and AI response to the database.
    */
   sendMessage: protectedProcedure
@@ -36,8 +36,8 @@ export const chatRouter = router({
           { role: "user" as const, content: input.message },
         ];
 
-        // Get response from Gemini
-        const aiResponse = await sendToGemini(messages);
+        // Get response from Groq/Llama
+        const aiResponse = await sendToGroq(messages);
 
         // Save AI response to database
         await saveChatMessage({

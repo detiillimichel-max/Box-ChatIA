@@ -6,7 +6,7 @@ if (!groqApiKey) {
   console.warn("[Groq] GROQ_API_KEY não configurada. Groq será desabilitado.");
 }
 
-const groq = groqApiKey ? new Groq({ apiKey: groqApiKey }) : null;
+const groq = groqApiKey ? new Groq({ apiKey: groqApiKey, defaultHeaders: { "User-Agent": "Box-ChatIA" } }) : null;
 
 export interface Message {
   role: "user" | "assistant";
